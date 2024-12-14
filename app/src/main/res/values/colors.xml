@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="maincolor">#050B18</color>
     <color name= "button_yellow">#ffff00</color>
+    <color name= "gray">#808080</color>
 </resources>

@@ -3,30 +3,42 @@ package com.example.listify
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
-import com.example.listify.R
+import android.widget.TextView
 
-class Adapter(private val dataList: MutableList<String>) :
-    RecyclerView.Adapter<Adapter.ViewHolder>() {
+class Adapter(
+    private var items: MutableList<Item>,
+    private val onDeleteClick: (Item) -> Unit // Коллбэк для удаления
+) : RecyclerView.Adapter<Adapter.MyViewHolder>() {
 
-    // Вложенный класс для ViewHolder
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.itemText) // ID TextView в layout
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val itemText: TextView = itemView.findViewById(R.id.itemText)
+        val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
     }
 
-    // Создаём новый ViewHolder, используя item layout
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_list, parent, false) // Используй свой item layout
-        return ViewHolder(view)
+            .inflate(R.layout.item_list, parent, false)
+        return MyViewHolder(view)
     }
 
-    // Привязываем данные к ViewHolder
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.text = dataList[position]
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val item = items[position]
+        holder.itemText.text = item.text
+
+        // Обработчик нажатия на крестик
+        holder.deleteButton.setOnClickListener {
+            onDeleteClick(item) // Вызов коллбэка для удаления
+        }
     }
 
-    // Возвращаем размер списка
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int = items.size
+
+    // Метод для обновления списка
+    fun updateData(newItems: List<Item>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
 }
